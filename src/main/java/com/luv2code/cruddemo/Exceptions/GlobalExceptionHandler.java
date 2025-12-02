@@ -13,8 +13,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleResourceNotFoundException(ResourceNotFoundException ex) {
 
-        ErrorDTO errorDTO = new ErrorDTO(ex.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+        ErrorDTO errorDTO =
+                new ErrorDTO(ex.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
 
         return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDTO> handleInternalServerException(Exception e){
+
+        var errorDTo = new ErrorDTO();
+
+        errorDTo.setMessage(e.getMessage());
+        errorDTo.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorDTo.setLocalDateTime(LocalDateTime.now());
+
+
+        return new ResponseEntity<>(errorDTo , HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
