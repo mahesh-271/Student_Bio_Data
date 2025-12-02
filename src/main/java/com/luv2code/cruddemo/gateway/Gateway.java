@@ -1,6 +1,5 @@
 package com.luv2code.cruddemo.gateway;
 
-import com.luv2code.cruddemo.Exceptions.DipExceptionHandler;
 import com.luv2code.cruddemo.entity.Address;
 import com.luv2code.cruddemo.entity.EducationalDetails;
 import com.luv2code.cruddemo.entity.FamilyDetails;
@@ -29,13 +28,7 @@ public class Gateway {
                 .get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(Address.class)
-                .onErrorResume(throwable ->
-                        Mono.error(DipExceptionHandler.builder()
-                                .time(LocalDateTime.now())
-                                .message(throwable.getMessage())
-                                .statusCode(HttpStatus.NOT_FOUND.value())
-                                .build()));
+                .bodyToMono(Address.class);
     }
 
 

@@ -1,5 +1,6 @@
 package com.luv2code.cruddemo.service;
 
+import com.luv2code.cruddemo.Exceptions.ResourceNotFoundException;
 import com.luv2code.cruddemo.dao.StudentDao;
 import com.luv2code.cruddemo.dao.StudentResponse;
 import com.luv2code.cruddemo.dao.StudentResponses;
@@ -11,6 +12,7 @@ import com.luv2code.cruddemo.gateway.Gateway;
 import com.luv2code.cruddemo.mapper.StudentMapper;
 import com.luv2code.cruddemo.repository.AddressRepository;
 import com.luv2code.cruddemo.repository.StudentRepository;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import model.StudentDaoResponse;
@@ -34,7 +36,7 @@ public class StudentService {
         var students = studentRepository.findAll();
 
         if(students.isEmpty()){
-            throw new RuntimeException("Student Details are not found ");
+            throw new ResourceNotFoundException("Student Details are not found ");
         }
 
        return Mono.just(students.stream().
@@ -48,16 +50,26 @@ public class StudentService {
 
     public Student getStudentsById(Integer id) {
 
+        //for checking the custom exception
+        if(id == 12344){
+            throw new RuntimeException("Data is not found ");
+        }
+
         return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with this user id "));
     }
 
     public Student editStudentDetails(StudentDao studentDao) {
-        var student = studentRepository.findById(studentDao.getId()).orElseThrow(() -> new RuntimeException("Id is not foudnd"));
+        var student = studentRepository.findById(studentDao.getId()).orElseThrow(() -> new ResourceNotFoundException("Id is not found"));
 
         if (student != null) {
             var editedStudent = studentMapper.mapToStudent(studentDao);
-            return studentRepository.save(editedStudent);
+            try {
+                return studentRepository.save(editedStudent);
+            }
+            catch (Exception e){
+                throw new ResourceNotFoundException(e.getMessage());
+            }
         } else {
             return null;
         }
@@ -68,7 +80,7 @@ public class StudentService {
         boolean isPresent = studentRepository.existsById(student.getId());
 
         if (isPresent) {
-            throw new RuntimeException("Student with id " + student.getId() + " already exists");
+            throw new ResourceNotFoundException("Student with id " + student.getId() + " already exists");
         }
 
         return studentRepository.save(student);
