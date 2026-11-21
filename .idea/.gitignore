@@ -1,3 +1,6 @@
 # Default ignored files
-/shelf/
-/workspace.xml
+# Maven build files
+target/
+
+# Compiled Java files
+*.class
