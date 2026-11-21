@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -80,5 +81,17 @@ public class GlobalExceptionHandler {
                 .build ();
 
         return new ResponseEntity<>(errorDTO , HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ProfessionalDetailsNotFoundException.class)
+    public ResponseEntity<ErrorDTO> handleResourceNotFoundException(ProfessionalDetailsNotFoundException ex, HttpServletRequest servletRequest){
+
+        return new ResponseEntity<> (
+                ErrorDTO.builder ()
+                        .message ( ex.getMessage () )
+                        .apiPath (servletRequest.getRequestURI ()  )
+                        .statusCode ( HttpStatus.NOT_FOUND.value () )
+                        .time ( LocalDateTime.now () )
+                        .build (), HttpStatus.NOT_FOUND);
     }
 }
