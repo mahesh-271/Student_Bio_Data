@@ -15,7 +15,6 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonIgnore
     private Integer id;
 
     @Column(name = "village_name")

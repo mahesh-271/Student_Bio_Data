@@ -1,6 +1,5 @@
 package com.luv2code.cruddemo.dao;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 @Data
